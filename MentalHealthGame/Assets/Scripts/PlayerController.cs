@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
             doubleJump = !doubleJump;
         }
 
-        if (Input.GetButtonDown("Jump") && rb.velocity.x > 0f)
+        if ((Input.GetButtonDown("Jump")) && (rb.velocity.x > 0f || rb.velocity.x < 0f))
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
@@ -90,7 +90,9 @@ public class PlayerController : MonoBehaviour
         if (rb.velocity.y < -0.1)
         {
             ChangeGravity();
-        } else {
+        }
+        else
+        {
             rb.gravityScale = 2;
         }
 
