@@ -183,7 +183,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "1111111111110000", "averageColors": "f999fbbbf999f777f888f777f999faaafaaaf999f777f999b8887aaa76667666" }
+			"cachedPixelData": null
 		}
 	], "enums": [], "externalEnums": [], "levelFields": [] },
 	"levels": [
