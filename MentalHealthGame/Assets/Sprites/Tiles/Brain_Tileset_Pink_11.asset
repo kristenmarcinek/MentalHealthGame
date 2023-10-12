@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Brain_Tileset_0
+  m_Name: Brain_Tileset_Pink_11
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -454348951, guid: 32acd3bd953a7504897f5822fa2bbc30, type: 3}
+  m_Sprite: {fileID: -1771149638, guid: 79160b3654a1d41a5aeb55f321bc94c0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
