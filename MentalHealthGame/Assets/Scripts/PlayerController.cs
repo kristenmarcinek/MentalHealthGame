@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
 
     public void ChangeGravity()
     {
-        rb.gravityScale = rb.gravityScale * 1.1f;
+        rb.gravityScale = rb.gravityScale * 1.045f;
     }
 
     private IEnumerator JumpCooldown()
