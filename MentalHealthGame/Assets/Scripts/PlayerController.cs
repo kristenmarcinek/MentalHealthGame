@@ -9,8 +9,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speed = 8f;
     [SerializeField] float jumpForce = 16f;
     private bool isFacingRight = true;
-    private bool doubleJump;
+    private bool canDoubleJump;
     [SerializeField] int maxLength = 50;
+    [SerializeField] float runningJump = 0.6f;
 
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform groundCheck;
@@ -65,19 +66,19 @@ public class PlayerController : MonoBehaviour
 
         if (isGrounded() && !Input.GetButton("Jump"))
         {
-            doubleJump = false;
+            canDoubleJump = false;
         }
 
-        if (Input.GetButtonDown("Jump") && isGrounded() || Input.GetButtonDown("Jump") && doubleJump)
+        if (Input.GetButtonDown("Jump") && isGrounded() || Input.GetButtonDown("Jump") && canDoubleJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
 
-            doubleJump = !doubleJump;
+            canDoubleJump = !canDoubleJump;
         }
 
         if ((Input.GetButtonDown("Jump")) && (rb.velocity.x > 0f || rb.velocity.x < 0f))
         {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * runningJump);
         }
 
         Left();
@@ -120,7 +121,7 @@ public class PlayerController : MonoBehaviour
 
     public bool isGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
     }
 
     public void ChangeGravity()
