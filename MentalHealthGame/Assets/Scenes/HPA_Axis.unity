@@ -555,7 +555,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 697382219989693467, guid: 22b167e1763d62e46a1fd5280d29b52e, type: 3}
       propertyPath: m_LinearDrag
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 697382219989693467, guid: 22b167e1763d62e46a1fd5280d29b52e, type: 3}
       propertyPath: m_AngularDrag
@@ -563,7 +563,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 697382219989693467, guid: 22b167e1763d62e46a1fd5280d29b52e, type: 3}
       propertyPath: m_GravityScale
-      value: 0.5
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4659957037173729958, guid: 22b167e1763d62e46a1fd5280d29b52e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -640,8 +640,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0b4a080272cb9145ae98fae1f882cdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swimSpeed: 5
-  swimForce: 3
+  swimSpeed: 3
+  swimForce: 2.5
   rb: {fileID: 898265639}
   maxLength: 50
 --- !u!1 &958208504

@@ -20,15 +20,12 @@ public class PlayerSwimming : MonoBehaviour
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
-    }
 
-    void FixedUpdate()
-    {
         rb.velocity = new Vector2(horizontal * swimSpeed, rb.velocity.y);
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxLength);
         if(Input.GetButtonDown("Jump"))
         {
-            rb.velocity = new Vector2(horizontal * swimSpeed, swimForce);
+            rb.velocity = new Vector2(rb.velocity.x, swimForce);
         }
     }
 }
