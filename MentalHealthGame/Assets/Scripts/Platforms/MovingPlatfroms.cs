@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class MovingPlatfroms : MonoBehaviour
 {
-    [SerializeField] private GameObject[] _waypoints;
-    private int _currentWaypointIndex = 0;
+    [SerializeField] private Transform[] _waypoints;
     [SerializeField] private float _platformSpeed = 2f;
+    private int _currentWaypointIndex = 0;
+
+
 
     private void Update()
     {
@@ -19,5 +21,26 @@ public class MovingPlatfroms : MonoBehaviour
             }
         }
         transform.position = Vector2.MoveTowards(transform.position, _waypoints[_currentWaypointIndex].transform.position, Time.deltaTime * _platformSpeed);
+    }
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("Player entered trigger.");
+            collision.gameObject.transform.SetParent(transform);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (collision.gameObject.activeSelf)
+            {
+                collision.gameObject.transform.SetParent(null);
+            }
+        }
     }
 }
