@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CortisolCollision : MonoBehaviour
 {
-    public Level2Manager twoMan;
+    public Level3Manager level3Man;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +21,7 @@ public class CortisolCollision : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.CompareTag("Player"))
         {
-            twoMan.timeRemaining -= 2f;
+            level3Man.timeRemaining -= 2f;
 
             Destroy(this.gameObject);
         }

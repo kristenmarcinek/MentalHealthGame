@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Level2Manager : MonoBehaviour
+public class Level3Manager : MonoBehaviour
 {
     public float timeRemaining = 350f;
     public bool timerIsRunning = false;
