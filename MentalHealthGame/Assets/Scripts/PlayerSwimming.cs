@@ -13,7 +13,7 @@ public class PlayerSwimming : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -23,9 +23,11 @@ public class PlayerSwimming : MonoBehaviour
 
         rb.velocity = new Vector2(horizontal * swimSpeed, rb.velocity.y);
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxLength);
-        if(Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump"))
         {
             rb.velocity = new Vector2(rb.velocity.x, swimForce);
         }
     }
+
+
 }
