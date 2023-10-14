@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Cortisol
+  - CortisolUp
+  - CortisolDown
+  - Ground
   layers:
   - Default
   - TransparentFX
