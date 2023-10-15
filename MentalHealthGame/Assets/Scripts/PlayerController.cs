@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour
 
     private bool jumpButtonPressed;
 
+    [SerializeField] SpriteRenderer sR;
+    [SerializeField] Animator animator;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -91,6 +94,16 @@ public class PlayerController : MonoBehaviour
         }
 
         Left();
+
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+        {
+            animator.SetBool("isRunning", true);
+        }
+
+        if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+        {
+            animator.SetBool("isRunning", false);
+        }
     }
 
     private void FixedUpdate()
@@ -114,12 +127,16 @@ public class PlayerController : MonoBehaviour
         if (isFacingRight && horizontal < 0f)
         {
             isFacingRight = !isFacingRight;
+            sR.flipX = true;
         }
 
         if (!isFacingRight && horizontal > 0f)
         {
             isFacingRight = true;
+            sR.flipX = false;
         }
+
+        animator.SetFloat("speed", Mathf.Abs(horizontal));
     }
 
     public bool isGrounded()
