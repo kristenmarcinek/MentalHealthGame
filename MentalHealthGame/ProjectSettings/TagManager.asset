@@ -9,6 +9,7 @@ TagManager:
   - CortisolDown
   - Ground
   - FinishPos
+  - Teleporter
   layers:
   - Default
   - TransparentFX
