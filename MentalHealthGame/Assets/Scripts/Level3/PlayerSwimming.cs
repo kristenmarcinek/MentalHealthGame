@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerSwimming : MonoBehaviour
 {
@@ -10,13 +11,9 @@ public class PlayerSwimming : MonoBehaviour
     [SerializeField] Rigidbody2D rb;
     [SerializeField] int maxLength = 50;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    [SerializeField] List<Transform> groundChecks;
+    [SerializeField] LayerMask groundLayer;
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
@@ -27,7 +24,26 @@ public class PlayerSwimming : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, swimForce);
         }
+
+
+        if (isGrounded())
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
-
+    public bool isGrounded()
+    {
+        foreach (Transform groundCheck in groundChecks)
+        {
+            if (Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
+
+

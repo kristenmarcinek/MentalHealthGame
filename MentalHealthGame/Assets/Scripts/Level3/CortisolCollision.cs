@@ -4,60 +4,35 @@ using UnityEngine;
 
 public class CortisolCollision : MonoBehaviour
 {
-    public Level3Manager level3Man;
-    public bool isUp;
-    //public bool isDown;
-    public float floatSpeed = 0.1f;
 
-    // Start is called before the first frame update
+    public Level3Manager level3Man;
+    public float speed = 2.0f; // Adjust the speed as needed
+    private Rigidbody2D rb;
+
     void Start()
     {
-        if(this.gameObject.tag == "CortisolUp")
-        {
-            isUp = true;
-        }
-
-        if(this.gameObject.tag == "CortisolDown")
-        {
-            //isDown = true;
-            isUp = false;
-        }
+        rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0; 
+        rb.velocity = (gameObject.CompareTag("CortisolUp")) ? Vector2.up * speed : Vector2.down * speed;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation; 
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if(isUp)
+        if (other.gameObject.CompareTag("Player"))
         {
-            transform.position += new Vector3(0, floatSpeed, 0);
-        }
-
-        if(!isUp)
-        {
-            transform.position -= new Vector3(0, floatSpeed, 0);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other) {
-        if(other.gameObject.CompareTag("Player"))
-        {
+           
             level3Man.timeRemaining -= 2f;
-
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
-
-        if(other.gameObject.CompareTag("Ground") && isUp)
+        else if (other.gameObject.CompareTag("Ground"))
         {
-            Debug.Log("colliding up");
-            isUp = false;
-            //isDown = true;
-        }
-
-        if(other.gameObject.CompareTag("Ground") && !isUp)
-        {
-            Debug.Log("colliding down");
-            isUp = true;
-            //isDown = false;
+           
+            rb.velocity = -rb.velocity; // Invert velocity to change direction
         }
     }
 }
+
+
+
+
