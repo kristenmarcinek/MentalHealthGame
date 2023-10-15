@@ -12,19 +12,19 @@ public class PlayerController : MonoBehaviour
     private bool canDoubleJump;
     [SerializeField] int maxLength = 50;
     [SerializeField] float runningJump = 0.6f;
+    [SerializeField] float doubleJumpForce = 12f; // Adjust the double jump height here
 
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
-
-    // [SerializeField] SpriteRenderer sR;
-    // [SerializeField] Animator animator;
 
     private bool isJumping;
     [SerializeField] float coyoteTime = 0.2f;
     private float coyoteTimeCounter;
     [SerializeField] float jumpBufferTime = 0.2f;
     private float jumpBufferCounter;
+
+    private bool jumpButtonPressed;
 
     // Start is called before the first frame update
     void Start()
@@ -49,15 +49,28 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             jumpBufferCounter = jumpBufferTime;
+            jumpButtonPressed = true;
         }
         else
         {
             jumpBufferCounter -= Time.deltaTime;
+            jumpButtonPressed = false;
+        }
+
+        float currentJumpForce = jumpForce;
+
+        if (!isGrounded() && jumpButtonPressed)
+        {
+            currentJumpForce = jumpForce;
+        }
+        else
+        {
+            currentJumpForce = jumpForce * runningJump;
         }
 
         if (coyoteTimeCounter > 0f && jumpBufferCounter > 0f && !isJumping)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            rb.velocity = new Vector2(rb.velocity.x, currentJumpForce);
 
             jumpBufferCounter = 0f;
 
@@ -69,16 +82,12 @@ public class PlayerController : MonoBehaviour
             canDoubleJump = false;
         }
 
-        if (Input.GetButtonDown("Jump") && isGrounded() || Input.GetButtonDown("Jump") && canDoubleJump)
+        if (Input.GetButtonDown("Jump") && (isGrounded() || canDoubleJump))
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            float jumpHeight = isGrounded() ? jumpForce : doubleJumpForce; // Reduce the double jump height here
+            rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
 
             canDoubleJump = !canDoubleJump;
-        }
-
-        if ((Input.GetButtonDown("Jump")) && (rb.velocity.x > 0f || rb.velocity.x < 0f))
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * runningJump);
         }
 
         Left();
@@ -102,21 +111,15 @@ public class PlayerController : MonoBehaviour
 
     public void Left()
     {
-        // || !isFacingRight && horizontal > 0f
         if (isFacingRight && horizontal < 0f)
         {
             isFacingRight = !isFacingRight;
-            // sR.flipX = true;
         }
 
-        // || isFacingRight && horizontal > 0f
         if (!isFacingRight && horizontal > 0f)
         {
             isFacingRight = true;
-            // sR.flipX = false;
         }
-
-        //animator.SetFloat("speed", Mathf.Abs(horizontal));
     }
 
     public bool isGrounded()
