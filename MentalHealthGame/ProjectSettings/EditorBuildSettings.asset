@@ -5,7 +5,22 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/StartMenu.unity
+    guid: b271d24052bc34ed7a1f8aff82bb160d
+  - enabled: 1
+    path: Assets/Scenes/AboutMenu.unity
+    guid: 970e1c6f67e324989aa1f429bafc16c2
+  - enabled: 1
+    path: Assets/Scenes/Levels/Amygdala.unity
+    guid: ae100ec5b03416446a878371a3f92424
+  - enabled: 1
+    path: Assets/Scenes/Levels/Hippocampus.unity
+    guid: 6c4e9f7aa3942426daa29fcfd4f59ef6
+  - enabled: 1
+    path: Assets/Scenes/Levels/Prefrontal_Cortex.unity
+    guid: ac77d56c947ac284e8a4d22342d4ac88
+  - enabled: 1
+    path: Assets/Scenes/Levels/HPA_Axis.unity
+    guid: 371219fa41125e74290d97ccda4f15a1
   m_configObjects: {}

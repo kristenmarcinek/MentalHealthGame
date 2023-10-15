@@ -8,6 +8,7 @@ TagManager:
   - CortisolUp
   - CortisolDown
   - Ground
+  - FinishPos
   layers:
   - Default
   - TransparentFX
