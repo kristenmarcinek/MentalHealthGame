@@ -13,6 +13,9 @@ public class PlayerSwimming : MonoBehaviour
 
     [SerializeField] List<Transform> groundChecks;
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] private SpriteRenderer sR;
+    [SerializeField] private Animator animator;
+    private bool isFacingRight = true;
 
     void Update()
     {
@@ -25,11 +28,14 @@ public class PlayerSwimming : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, swimForce);
         }
 
+        animator.SetBool("isSwimming", Mathf.Abs(horizontal) > 0);
 
         if (isGrounded())
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
+        Left();
     }
 
     public bool isGrounded()
@@ -42,6 +48,18 @@ public class PlayerSwimming : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private void Left()
+    {
+        // Flip the character's sprite and handle speed
+        if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
+        {
+            isFacingRight = !isFacingRight;
+            sR.flipX = !sR.flipX;
+        }
+
+        animator.SetFloat("speed", Mathf.Abs(horizontal));
     }
 }
 
