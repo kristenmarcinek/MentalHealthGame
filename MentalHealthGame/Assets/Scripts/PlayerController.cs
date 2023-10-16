@@ -60,6 +60,16 @@ public class PlayerController : MonoBehaviour
             jumpButtonPressed = false;
         }
 
+        if(isGrounded())
+        {
+            animator.SetBool("isJumping", false);
+        }
+
+        if(!isGrounded())
+        {
+            animator.SetBool("isJumping", true);
+        }
+
         float currentJumpForce = jumpForce;
 
         if (!isGrounded() && jumpButtonPressed)
@@ -95,12 +105,12 @@ public class PlayerController : MonoBehaviour
 
         Left();
 
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D) && isGrounded())
         {
             animator.SetBool("isRunning", true);
         }
 
-        if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+        if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D) && isGrounded())
         {
             animator.SetBool("isRunning", false);
         }
