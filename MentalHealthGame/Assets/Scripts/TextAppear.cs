@@ -7,10 +7,12 @@ public class TextAppear : MonoBehaviour
 {
     [SerializeField] GameObject aboutText;
     [SerializeField] GameObject levelTitleText;
+    [SerializeField] GameObject backgroundImage;
 
     // Start is called before the first frame update
     void Start()
     {
+        backgroundImage.SetActive(true);
         aboutText.SetActive(true);
         levelTitleText.SetActive(true);
 
@@ -25,8 +27,9 @@ public class TextAppear : MonoBehaviour
 
     public IEnumerator ShowText()
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(5f);
         aboutText.SetActive(false);
         levelTitleText.SetActive(false);
+        backgroundImage.SetActive(false);
     }
 }

@@ -6,49 +6,49 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private float horizontal;
-    [SerializeField] float speed = 8f;
-    [SerializeField] float jumpForce = 16f;
+    [SerializeField] private float speed = 8f;
+    [SerializeField] private float jumpForce = 16f;
+    [SerializeField] private float doubleJumpForce = 12f;
+    [SerializeField] private int maxLength = 50;
+    [SerializeField] private float runningJump = 0.6f;
+
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
+
     private bool isFacingRight = true;
     private bool canDoubleJump;
-    [SerializeField] int maxLength = 50;
-    [SerializeField] float runningJump = 0.6f;
-    [SerializeField] float doubleJumpForce = 12f; // Adjust the double jump height here
-
-    [SerializeField] Rigidbody2D rb;
-    [SerializeField] Transform groundCheck;
-    [SerializeField] LayerMask groundLayer;
-
-    private bool isJumping;
-    [SerializeField] float coyoteTime = 0.2f;
+    [SerializeField] private float coyoteTime = 0.2f;
     private float coyoteTimeCounter;
-    [SerializeField] float jumpBufferTime = 0.2f;
+    [SerializeField] private float jumpBufferTime = 0.2f;
     private float jumpBufferCounter;
 
     private bool jumpButtonPressed;
+    private bool isJumping;
+    [SerializeField] private SpriteRenderer sR;
+    [SerializeField] private Animator animator;
 
-    [SerializeField] SpriteRenderer sR;
-    [SerializeField] Animator animator;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
+        // Check if the player is grounded and update coyoteTimeCounter
         if (isGrounded())
         {
             coyoteTimeCounter = coyoteTime;
+            canDoubleJump = true; // Reset double jump when grounded
+            if (isJumping)
+            {
+                isJumping = false; // Reset isJumping when grounded
+                animator.SetBool("isJumping", false); // Set jump animation parameter
+            }
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
         }
 
+        // Check for jump input and handle jump buffer
         if (Input.GetButtonDown("Jump"))
         {
             jumpBufferCounter = jumpBufferTime;
@@ -60,35 +60,16 @@ public class PlayerController : MonoBehaviour
             jumpButtonPressed = false;
         }
 
-        // Improved double jump logic
-        if (isGrounded())
+        // Handle jump logic
+        if (jumpBufferCounter > 0f)
         {
-            canDoubleJump = true;
+            TryJump();
         }
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            if (isGrounded() || canDoubleJump)
-            {
-                float jumpHeight = isGrounded() ? jumpForce : doubleJumpForce;
-                rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
-                canDoubleJump = !isGrounded();
-            }
-        }
+        // Handle running animation
+        animator.SetBool("isRunning", Mathf.Abs(horizontal) > 0 && isGrounded());
 
-        // Improved running animation handling
-        if (Mathf.Abs(horizontal) > 0 && isGrounded())
-        {
-            animator.SetBool("isRunning", true);
-        }
-        else
-        {
-            animator.SetBool("isRunning", false);
-        }
-
-        // Simplified jump animation handling
-        animator.SetBool("isJumping", !isGrounded());
-
+        // Handle flip and speed for left/right movement
         Left();
     }
 
@@ -96,223 +77,58 @@ public class PlayerController : MonoBehaviour
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
-        // Gravity scaling (you can fine-tune the value)
-        if (rb.velocity.y < -0.1)
+        // Handle gravity scaling
+        if (rb.velocity.y < -0.1f)
         {
-            rb.gravityScale = 2.0f; // Adjust this value as needed
+            rb.gravityScale = 2.0f;
         }
         else
         {
-            rb.gravityScale = 2.0f; // Reset gravity scale to the default value
+            rb.gravityScale = 2.0f;
         }
 
+        // Clamp maximum velocity
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxLength);
     }
 
-    public void Left()
+    private void TryJump()
     {
-        if (isFacingRight && horizontal < 0f)
+        if (isGrounded())
+        {
+            // Player is on the ground, perform a regular jump
+            Jump(jumpForce);
+            canDoubleJump = true;
+        }
+        else if (canDoubleJump)
+        {
+            // Player can perform a double jump
+            Jump(doubleJumpForce);
+            canDoubleJump = false;
+        }
+    }
+
+    private void Jump(float jumpHeight)
+    {
+        rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
+        isJumping = true;
+        animator.SetBool("isJumping", true);
+    }
+
+    private void Left()
+    {
+        // Flip the character's sprite and handle speed
+        if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
         {
             isFacingRight = !isFacingRight;
-            sR.flipX = true;
-        }
-
-        if (!isFacingRight && horizontal > 0f)
-        {
-            isFacingRight = true;
-            sR.flipX = false;
+            sR.flipX = !sR.flipX;
         }
 
         animator.SetFloat("speed", Mathf.Abs(horizontal));
     }
 
-    public bool isGrounded()
+    private bool isGrounded()
     {
+        // Check if the player is grounded based on the ground layer
         return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
     }
-
-    public void ChangeGravity()
-    {
-        rb.gravityScale = rb.gravityScale * 1.045f;
-    }
-
-    private IEnumerator JumpCooldown()
-    {
-        isJumping = true;
-        yield return new WaitForSeconds(0.4f);
-        isJumping = false;
-    }
 }
-
-
-
-
-
-//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-
-//public class PlayerController : MonoBehaviour
-//{
-//    private float horizontal;
-//    [SerializeField] float speed = 8f;
-//    [SerializeField] float jumpForce = 16f;
-//    private bool isFacingRight = true;
-//    private bool canDoubleJump;
-//    [SerializeField] int maxLength = 50;
-//    [SerializeField] float runningJump = 0.6f;
-//    [SerializeField] float doubleJumpForce = 12f; // Adjust the double jump height here
-
-//    [SerializeField] Rigidbody2D rb;
-//    [SerializeField] Transform groundCheck;
-//    [SerializeField] LayerMask groundLayer;
-
-//    private bool isJumping;
-//    [SerializeField] float coyoteTime = 0.2f;
-//    private float coyoteTimeCounter;
-//    [SerializeField] float jumpBufferTime = 0.2f;
-//    private float jumpBufferCounter;
-
-//    private bool jumpButtonPressed;
-
-//    [SerializeField] SpriteRenderer sR;
-//    [SerializeField] Animator animator;
-
-//    // Start is called before the first frame update
-//    void Start()
-//    {
-
-//    }
-
-//    // Update is called once per frame
-//    void Update()
-//    {
-//        horizontal = Input.GetAxisRaw("Horizontal");
-
-//        if (isGrounded())
-//        {
-//            coyoteTimeCounter = coyoteTime;
-//        }
-//        else
-//        {
-//            coyoteTimeCounter -= Time.deltaTime;
-//        }
-
-//        if (Input.GetButtonDown("Jump"))
-//        {
-//            jumpBufferCounter = jumpBufferTime;
-//            jumpButtonPressed = true;
-//        }
-//        else
-//        {
-//            jumpBufferCounter -= Time.deltaTime;
-//            jumpButtonPressed = false;
-//        }
-
-//        if(isGrounded())
-//        {
-//            animator.SetBool("isJumping", false);
-//        }
-
-//        if(!isGrounded())
-//        {
-//            animator.SetBool("isJumping", true);
-//        }
-
-//        float currentJumpForce = jumpForce;
-
-//        if (!isGrounded() && jumpButtonPressed)
-//        {
-//            currentJumpForce = jumpForce;
-//        }
-//        else
-//        {
-//            currentJumpForce = jumpForce * runningJump;
-//        }
-
-//        if (coyoteTimeCounter > 0f && jumpBufferCounter > 0f && !isJumping)
-//        {
-//            rb.velocity = new Vector2(rb.velocity.x, currentJumpForce);
-
-//            jumpBufferCounter = 0f;
-
-//            StartCoroutine(JumpCooldown());
-//        }
-
-//        if (isGrounded() && !Input.GetButton("Jump"))
-//        {
-//            canDoubleJump = false;
-//        }
-
-//        if (Input.GetButtonDown("Jump") && (isGrounded() || canDoubleJump))
-//        {
-//            float jumpHeight = isGrounded() ? jumpForce : doubleJumpForce; // Reduce the double jump height here
-//            rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
-
-//            canDoubleJump = !canDoubleJump;
-//        }
-
-//        Left();
-
-//        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D) && isGrounded())
-//        {
-//            animator.SetBool("isRunning", true);
-//        }
-
-//        if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D) && isGrounded())
-//        {
-//            animator.SetBool("isRunning", false);
-//        }
-//    }
-
-//    private void FixedUpdate()
-//    {
-//        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-
-//        if (rb.velocity.y < -0.1)
-//        {
-//            ChangeGravity();
-//        }
-//        else
-//        {
-//            rb.gravityScale = 2;
-//        }
-
-//        rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxLength);
-//    }
-
-//    public void Left()
-//    {
-//        if (isFacingRight && horizontal < 0f)
-//        {
-//            isFacingRight = !isFacingRight;
-//            sR.flipX = true;
-//        }
-
-//        if (!isFacingRight && horizontal > 0f)
-//        {
-//            isFacingRight = true;
-//            sR.flipX = false;
-//        }
-
-//        animator.SetFloat("speed", Mathf.Abs(horizontal));
-//    }
-
-//    public bool isGrounded()
-//    {
-//        return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
-//    }
-
-//    public void ChangeGravity()
-//    {
-//        rb.gravityScale = rb.gravityScale * 1.045f;
-//    }
-
-//    private IEnumerator JumpCooldown()
-//    {
-//        isJumping = true;
-//        yield return new WaitForSeconds(0.4f);
-//        isJumping = false;
-//    }
-//}
