@@ -43,9 +43,12 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("StartMenu");
     }
 
-   
+    public void ShowHelpMenu()
+    {
+        SceneManager.LoadScene("HelpScene");
+    }
 
 
-   
+
 
 }
