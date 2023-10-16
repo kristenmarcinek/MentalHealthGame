@@ -157,7 +157,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.0001, y: 63.95439}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 680, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &145146619
@@ -180,7 +180,19 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'put end text here '
+  m_text: 'Thank you for exploring the world of Psyche Quest. Just as the moon waxes
+    and wanes, so do the emotions that cast shadows over their lives. Yet, in these
+    somber depths, you''ve gained an invaluable treasure - a deeper sense of empathy.
+    You''ve seen how, in the quiet moments between the storms, there''s room for
+    hope, healing, and understanding.
+
+
+    You have reached the end of your journey,
+    but it''s important to recognize that for many individuals, their voyage with
+    borderline personality disorder does not end. This doesn''t diminish the worth
+    or significance of their journey, nor does it mean their lives are full of sorrow,
+    as life keeps moving forward, with its mix of ups and downs, and each step taken
+    holds immeasurable significance.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 23ea0250f2e15eb4283c79f2c9af74d9, type: 2}
   m_sharedMaterial: {fileID: -5568062370867912373, guid: 23ea0250f2e15eb4283c79f2c9af74d9, type: 2}
