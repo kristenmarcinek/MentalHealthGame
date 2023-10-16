@@ -5,130 +5,160 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private float horizontal;
+    [Header("Movement Variables")]
     [SerializeField] private float speed = 8f;
     [SerializeField] private float jumpForce = 16f;
     [SerializeField] private float doubleJumpForce = 12f;
     [SerializeField] private int maxLength = 50;
-    [SerializeField] private float runningJump = 0.6f;
 
-    [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
-
+    private float horizontal;
     private bool isFacingRight = true;
-    private bool canDoubleJump;
+    private bool doubleJump;
+    private bool isJumping;
+
+    [Header("Components")]
+    public Rigidbody2D rb;
+    public Transform groundCheck;
+    public LayerMask groundLayer;
+    public SpriteRenderer sR;
+    public Animator animator;
+
+    [Header("Control Variables")]
     [SerializeField] private float coyoteTime = 0.2f;
-    private float coyoteTimeCounter;
     [SerializeField] private float jumpBufferTime = 0.2f;
+    private float coyoteTimeCounter;
     private float jumpBufferCounter;
 
-    private bool jumpButtonPressed;
-    private bool isJumping;
-    [SerializeField] private SpriteRenderer sR;
-    [SerializeField] private Animator animator;
+    [Header("Running Jump Variables")]
+    [SerializeField] private float releaseJumpDuration = 0.2f;
+    private float releaseJumpCounter;
 
     private void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
+        GetInput();
+        CheckGrounded();
+        HandleJumpInput();
+        HandleDoubleJump();
+        HandleReleaseJumpInput();
+        UpdateAnimator();
+    }
 
-        // Check if the player is grounded and update coyoteTimeCounter
+    private void FixedUpdate()
+    {
+        MoveHorizontally();
+        AdjustGravity();
+        LimitVelocity();
+    }
+
+    private void GetInput()
+    {
+        horizontal = Input.GetAxisRaw("Horizontal");
+    }
+
+    private void CheckGrounded()
+    {
         if (isGrounded())
         {
             coyoteTimeCounter = coyoteTime;
-            canDoubleJump = true; // Reset double jump when grounded
-            if (isJumping)
-            {
-                isJumping = false; // Reset isJumping when grounded
-                animator.SetBool("isJumping", false); // Set jump animation parameter
-            }
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
         }
+    }
 
-        // Check for jump input and handle jump buffer
+    private void HandleJumpInput()
+    {
         if (Input.GetButtonDown("Jump"))
         {
             jumpBufferCounter = jumpBufferTime;
-            jumpButtonPressed = true;
+            releaseJumpCounter = 0f;
         }
         else
         {
             jumpBufferCounter -= Time.deltaTime;
-            jumpButtonPressed = false;
+            releaseJumpCounter += Time.deltaTime;
         }
 
-        // Handle jump logic
-        if (jumpBufferCounter > 0f)
+        if (coyoteTimeCounter > 0f && jumpBufferCounter > 0f && !isJumping)
         {
-            TryJump();
+            Jump(jumpForce);
         }
-
-        // Handle running animation
-        animator.SetBool("isRunning", Mathf.Abs(horizontal) > 0 && isGrounded());
-
-        // Handle flip and speed for left/right movement
-        Left();
     }
 
-    private void FixedUpdate()
+    private void Jump(float force)
+    {
+        rb.velocity = new Vector2(rb.velocity.x, force);
+        jumpBufferCounter = 0f;
+        StartCoroutine(JumpCooldown());
+    }
+
+    private void HandleDoubleJump()
+    {
+        if (isGrounded() && !Input.GetButton("Jump"))
+        {
+            doubleJump = false;
+            animator.SetBool("isJumping", false);
+        }
+
+        if ((Input.GetButtonDown("Jump") && isGrounded()) || (Input.GetButtonDown("Jump") && doubleJump))
+        {
+            Jump(doubleJumpForce);
+            doubleJump = !doubleJump;
+            animator.SetBool("isJumping", true);
+        }
+    }
+
+    private void HandleReleaseJumpInput()
+    {
+        if (Input.GetButtonUp("Jump") && (rb.velocity.y > 0f || rb.velocity.y < 0f) && releaseJumpCounter < releaseJumpDuration)
+        {
+            // Reduce upward velocity when jump button is released
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+        }
+    }
+
+    private void UpdateAnimator()
+    {
+        animator.SetBool("isRunning", Mathf.Abs(horizontal) > 0 && isGrounded());
+        FlipCharacter();
+    }
+
+    private void MoveHorizontally()
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+    }
 
-        // Handle gravity scaling
-        if (rb.velocity.y < -0.1f)
-        {
-            rb.gravityScale = 2.0f;
-        }
-        else
-        {
-            rb.gravityScale = 2.0f;
-        }
+    private void AdjustGravity()
+    {
+        rb.gravityScale = (rb.velocity.y < -0.1) ? rb.gravityScale * 1.1f : 2;
+    }
 
-        // Clamp maximum velocity
+    private void LimitVelocity()
+    {
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxLength);
     }
 
-    private void TryJump()
+    private bool isGrounded()
     {
-        if (isGrounded())
-        {
-            // Player is on the ground, perform a regular jump
-            Jump(jumpForce);
-            canDoubleJump = true;
-        }
-        else if (canDoubleJump)
-        {
-            // Player can perform a double jump
-            Jump(doubleJumpForce);
-            canDoubleJump = false;
-        }
+        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
-    private void Jump(float jumpHeight)
+    private void FlipCharacter()
     {
-        rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
-        isJumping = true;
-        animator.SetBool("isJumping", true);
-    }
-
-    private void Left()
-    {
-        // Flip the character's sprite and handle speed
         if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
         {
             isFacingRight = !isFacingRight;
             sR.flipX = !sR.flipX;
         }
-
-        animator.SetFloat("speed", Mathf.Abs(horizontal));
     }
 
-    private bool isGrounded()
+    private IEnumerator JumpCooldown()
     {
-        // Check if the player is grounded based on the ground layer
-        return Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
+        isJumping = true;
+        animator.SetBool("isJumping", true);
+        yield return new WaitForSeconds(0.4f);
+        isJumping = false;
+        animator.SetBool("isJumping", false);
     }
 }

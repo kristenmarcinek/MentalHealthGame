@@ -59,7 +59,7 @@ public class PlayerSwimming : MonoBehaviour
             sR.flipX = !sR.flipX;
         }
 
-        animator.SetFloat("speed", Mathf.Abs(horizontal));
+        //animator.SetFloat("speed", Mathf.Abs(horizontal));
     }
 }
 
