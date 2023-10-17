@@ -8,14 +8,15 @@ public class PlayerSwimming : MonoBehaviour
     private float horizontal;
     [SerializeField] float swimSpeed = 8f;
     [SerializeField] float swimForce = 8f;
-    [SerializeField] Rigidbody2D rb;
     [SerializeField] int maxLength = 50;
+    private bool isFacingRight = true;
 
-    [SerializeField] List<Transform> groundChecks;
-    [SerializeField] LayerMask groundLayer;
+    [SerializeField] Rigidbody2D rb;
     [SerializeField] private SpriteRenderer sR;
     [SerializeField] private Animator animator;
-    private bool isFacingRight = true;
+
+
+
 
     void Update()
     {
@@ -30,25 +31,10 @@ public class PlayerSwimming : MonoBehaviour
 
         animator.SetBool("isSwimming", Mathf.Abs(horizontal) > 0);
 
-        if (isGrounded())
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-
         Left();
     }
 
-    public bool isGrounded()
-    {
-        foreach (Transform groundCheck in groundChecks)
-        {
-            if (Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     private void Left()
     {
@@ -59,7 +45,15 @@ public class PlayerSwimming : MonoBehaviour
             sR.flipX = !sR.flipX;
         }
 
-        //animator.SetFloat("speed", Mathf.Abs(horizontal));
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 }
 

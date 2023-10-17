@@ -5,7 +5,7 @@ using TMPro;
 
 public class Level3Manager : MonoBehaviour
 {
-    public float timeRemaining = 350f;
+    public float timeRemaining = 180f;
     public bool timerIsRunning = false;
     public TextMeshProUGUI timerText;
 
